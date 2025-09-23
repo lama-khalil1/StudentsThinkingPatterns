@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نتائج الأطفال</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+        th { background-color: #f4f4f4; }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center;">جدول نتائج الأطفال</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>تاريخ التسجيل</th>
+                <th>نمط التفكير</th>
+                <th>الفصل</th>
+                <th>الاسم</th>
+            </tr>
+        </thead>
+        <tbody id="resultsTableBody">
+            <tr><td colspan="5">جاري تحميل البيانات...</td></tr>
+        </tbody>
+    </table>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyB-FZIk3MoPegDHsmDDUzl5pYCzi4AnlEQ",
+            authDomain: "studentpatterns.firebaseapp.com",
+            projectId: "studentpatterns",
+            storageBucket: "studentpatterns.firebasestorage.app",
+            messagingSenderId: "533359813954",
+            appId: "1:533359813954:web:909cbdcd20733ac6e994db"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        async function loadResults() {
+            const tbody = document.getElementById("resultsTableBody");
+            tbody.innerHTML = ""; // مسح المحتوى القديم
+
+            try {
+                const q = query(collection(db, "results"), orderBy("createdAt", "desc"));
+                const snapshot = await getDocs(q);
+
+                if (snapshot.empty) {
+                    tbody.innerHTML = "<tr><td colspan='5'>لا توجد بيانات بعد</td></tr>";
+                    return;
+                }
+
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const answers = Array.isArray(data.answers) ? data.answers.join(", ") : "";
+                    const date = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleString("ar-EG") : "";
+
+                    const row = `<tr>
+                        <td>${date}</td>
+                        <td>${data.thinkingStyle || ""}</td>
+                         <td>${data.desc || ""}</td>
+                        <td>${data.name || ""}</td>
+                    </tr>`;
+                    tbody.innerHTML += row;
+                });
+            } catch (error) {
+                console.error("حدث خطأ أثناء جلب البيانات:", error);
+                tbody.innerHTML = "<tr><td colspan='5'>حدث خطأ أثناء تحميل البيانات</td></tr>";
+            }
+        }
+
+        loadResults();
+    </script>
+</body>
+</html>

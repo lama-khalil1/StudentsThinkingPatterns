@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام تحديد انماط التفكير للطفل  </title>
+    <link rel="stylesheet" href="style.css">  <!-- ربط ملف الـ CSS -->
+</head>
+<body>
+    <header>
+        <h1>مرحبا بك في اختبار تحديد انماط التفكير    </h1>
+        <img src="./asses/logo.png" alt="" width="80px" >
+
+    </header>
+    <main>
+
+        <div class="quistioncontainer">
+             <h2 id="questionText">هل تريد معرفة المزيد؟</h2>
+        <div class="img-container">
+    <div class="answercard">
+        <img src="" alt="" class="answer-image" data-value="1">
+        <h3 class="image-title">العنوان الفرعي 1</h3>
+    </div>
+    <div class="answercard">
+        <img src="" alt="" class="answer-image" data-value="2">
+        <h3 class="image-title">العنوان الفرعي 2</h3>
+    </div>
+    <div class="answercard">
+        <img src="" alt="" class="answer-image" data-value="3">
+        <h3 class="image-title">العنوان الفرعي 3</h3>
+    </div>
+    <div class="answercard">
+        <img src="" alt="" class="answer-image" data-value="4">
+        <h3 class="image-title">العنوان الفرعي 4</h3>
+    </div>
+</div>
+
+<div class="actionconatiner">
+    <button id="yesBtn">next</button>
+    <button id="noBtn">submit</button>
+    <button id="saveResultBtn">💾 حفظ النتيجة</button>
+    <p id="saveStatus"></p>
+
+</div>       
+        
+        <!-- <button id="clickMe">اضغط هنا</button> -->
+    </main>
+    <script src="app.js"></script>
+
+    <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+  import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyB-FZIk3MoPegDHsmDDUzl5pYCzi4AnlEQ",
+    authDomain: "studentpatterns.firebaseapp.com",
+    projectId: "studentpatterns",
+    storageBucket: "studentpatterns.firebasestorage.app",
+    messagingSenderId: "533359813954",
+    appId: "1:533359813954:web:909cbdcd20733ac6e994db"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // 🔹 دالة الحفظ
+  async function saveResultToFirebase() {
+    const finalResult = window.currentThinkingStyle || "غير محدد";
+
+    // جلب اسم الطفل والفصل من selectedValues
+    const childNameObj = selectedValues.find(v => v.key === "childName");
+    const childDescObj = selectedValues.find(v => v.key === "childDesc");
+
+    const childName = childNameObj ? childNameObj.value : "";
+    const childDesc = childDescObj ? childDescObj.value : "";
+
+    if (!childName || !childDesc) {
+      alert("الرجاء إدخال اسم الطفل والفصل في أول سؤالين");
+      return;
+    }
+
+    // الإجابات الصورية
+    const imageAnswers = selectedValues.filter(v => typeof v === "string");
+
+    try {
+      await addDoc(collection(db, "results"), {
+        name: childName,
+        desc: childDesc,
+        answers: imageAnswers,
+        thinkingStyle: finalResult,
+        createdAt: new Date()
+      });
+      document.getElementById("saveStatus").innerText = "✅ تم حفظ النتيجة";
+      alert("تم حفظ النتيجة بنجاح في Firebase");
+    } catch (e) {
+      console.error("Error adding document: ", e);
+      document.getElementById("saveStatus").innerText = "❌ حدث خطأ أثناء الحفظ";
+      alert("حدث خطأ أثناء الحفظ في Firebase");
+    }
+  }
+
+  // 🔹 ربط الزر
+  document.getElementById("saveResultBtn").addEventListener("click", saveResultToFirebase);
+</script>
+
+
+
+
+</body>  <!-- ربط ملف الـ JavaScript -->
+</body>
+</html>
