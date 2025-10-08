@@ -8,15 +8,26 @@ body {
 header {
     background: linear-gradient(to right, #4a7ab5, #229497, #24a148);
     color: white;
-    text-align: center;
-    padding: 10px 0;
     display: flex;
     align-items: center;
-    justify-content: end; 
-    gap: 30px;  
-    padding: 0px 20px ; 
-
+    padding: 0 20px;
+    position: relative;
+    height: 80px; /* ارتفاع الهيدر */
 }
+
+header img {
+    height: 60px; /* حجم الصورة */
+}
+
+header h2 {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0;
+}
+
+
+
 
 main {
     padding: 20px;
@@ -40,7 +51,7 @@ button:hover {
 }
 .quistioncontainer {
     margin-top: 40px;
-    width: 70vw ;
+    width: 80vw ;
     padding: 24px;
     height: fit-content;
     border-radius: 30px;
@@ -49,18 +60,18 @@ button:hover {
                 -15px -15px 30px #ffffff;
 }
 .img-container {
-       display: flex;
-   gap: 30px;
+    display: flex;
+    gap: 30px;
     padding: 20px;
     align-items: center;
-        overflow: hidden;
-       gap: 10px;
-        justify-content: center;
-       
-        margin: auto;
-        margin: 20px;
-     
+    justify-content: center;
+    margin: 20px;
+
+    /* 👇 التعديلات المهمة */
+    overflow: visible;   /* يخلي النص يبان فوق */
+    border-radius: 20px; /* حسب الشكل اللي تبينه */
 }
+
 
 
 
@@ -94,3 +105,294 @@ button:hover {
     margin-top: 10px;
     font-weight: bold;
 }
+
+
+#startSection{
+    padding: 5%;
+    text-align: right;
+    width: 300px;
+    position: relative;
+    top :5vh;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    border: 1px solid #dfdfdf;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    color: #4a7ab5;
+
+    input{
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 16px;
+        text-align: right;
+    }
+
+    .startbtncontainer{
+        display: flex;
+        gap: 10PX;
+        flex-direction: column;
+
+        #storeda{
+            background: #f5f5f5;
+             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+             border: #33333348 solid 1PX;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            color: #4a7ab5;
+
+            &:hover{
+                transform: translateY(-3px);
+                border: #4a7ab5 solid 1PX;
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            }
+        }
+    }
+}
+
+ h1 {
+            text-align: center;
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin-top: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #d1ffd1;
+        }
+
+        #resultsTableBody {
+            text-align: center;
+        }
+
+        #resultsTableBody td {
+            font-size: 13px;
+            color: #555;
+        }
+
+        .loading-message {
+            text-align: center;
+            font-size: 16px;
+            color: #888;
+        }
+
+        .error-message {
+            color: red;
+        }
+
+         .modal {
+            display: none; /* إخفاء النافذة في البداية */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* خلفية شبه شفافة */
+            z-index: 999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .close-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        .close-btn:hover {
+            background-color: #45a049;
+        }
+#resultMessage {
+    font-size: 24px; 
+}
+/* حاوية تسوي صف أفقي: صورة - بوكس مركزي - صورة */
+.with-sides {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 28px;              /* المسافة بين الصور والبوكس */
+    padding: 40px 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* ضبط البوكس المركزي */
+#startSection {
+    max-width: 560px;       /* عرض البوكس */
+    width: 100%;
+    background: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    text-align: center;
+}
+
+/* الصور الجانبية */
+.side-photo {
+    width: 220px;
+    height: 320px;
+    object-fit: cover;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+    flex-shrink: 0;         /* لا تنكمش الصورة */
+    transition: transform .18s ease, box-shadow .18s ease;
+}
+
+/* تأثير عند المرور لو حبيت */
+.side-photo:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 14px 30px rgba(0,0,0,0.18);
+}
+
+/* إذا أردتي الصورة اليسرى تظهر على اليسار والصورة اليمنى على اليمين - (اختياري لتبديل الترتيب في RTL) */
+.with-sides .left  { order: 1; } /* اليسار أول */
+.with-sides #startSection { order: 2; }
+.with-sides .right { order: 3; }
+
+/* تجاوب - على الشاشات الصغيرة نجرّهم تحت البوكس عمودياً */
+@media (max-width: 900px) {
+    .with-sides {
+        flex-direction: column;
+        gap: 18px;
+    }
+    .side-photo {
+        width: 160px;
+        height: 220px;
+    }
+    #startSection { max-width: 520px; padding: 24px; }
+}
+
+/* لو الشاشة أصغر (هاتف) ونبغي نخفي الصور لتوفير مساحة */
+@media (max-width: 520px) {
+    .side-photo { display: none; }
+    #startSection { padding: 20px; }
+}
+.hide-sides .side-photo {
+  display: none !important;
+  opacity: 0;
+  transform: translateY(-6px);
+}
+/* عندما نخفي الصور الجانبية، نزيل الفراغ ونرتّب المحتوى للأعلى */
+.table-with-sides.hide-sides {
+  /* خفّض المساحة العلوية والسفلية للحاوية */
+  padding-top: 6px !important;
+  padding-bottom: 6px !important;
+}
+
+/* نرفّع الغلاف الداخلي (الجدول) قليلًا ليتقدّم نحو الأعلى */
+.table-with-sides.hide-sides .table-wrapper {
+  transform: translateY(-28px);
+  transition: transform 220ms ease;
+}
+
+.table-with-sides.hide-sides .quistioncontainer {
+  margin-top: -20px; /* عدّلي الرقم حسب الحاجة */
+  transition: margin-top 220ms ease;
+}
+
+/* زر القراءة العام */
+.speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 6px;
+}
+
+/* نسخة صغيرة للصوت بجانب العنوان (داخل h3) */
+.speak-btn.small-inline {
+    margin-inline-start: 8px; /* مسافة بين العنوان والزر في RTL */
+    font-size: 16px;
+}
+
+/* زر صغير عند السؤال */
+.speak-btn.small {
+    margin-left: 8px;
+    font-size: 20px;
+}
+
+/* تحسين إمكانية الوصول (تركيز) */
+.speak-btn:focus {
+    outline: 2px solid #2f8b57;
+    border-radius: 6px;
+}
+/* ===== احتفال: نجوم متحركة فوق المودال ===== */
+.modal { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; z-index: 1500; }
+.modal .modal-content { position: relative; z-index: 1600; }
+
+/* حاوية النجوم فوق المودال */
+.celebration-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: visible;
+  z-index: 1550;
+}
+
+/* نجمة فردية */
+.celebration-star {
+  position: absolute;
+  font-size: 20px;
+  opacity: 0;
+  transform: translateY(0) scale(0.6) rotate(0deg);
+  animation: star-pop 1200ms cubic-bezier(.2,.9,.2,1) forwards;
+  will-change: transform, opacity;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+/* حركة كل نجمة تظهر وتصعد وتختفي */
+@keyframes star-pop {
+  0%   { opacity: 0; transform: translateY(0) scale(0.6) rotate(0deg); }
+  20%  { opacity: 1; transform: translateY(-10px) scale(1.1) rotate(15deg); }
+  60%  { opacity: 1; transform: translateY(-80px) scale(1) rotate(45deg); }
+  100% { opacity: 0; transform: translateY(-140px) scale(0.6) rotate(90deg); }
+}
+
+/* تخفيف الحركة لمن يفضلون تقليل الحركة */
+@media (prefers-reduced-motion: reduce) {
+  .celebration-star { animation: none; opacity: 1; transform: none; }
+}
+        
+
