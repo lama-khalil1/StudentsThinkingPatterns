@@ -1,82 +1,328 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نتائج الأطفال</title>
-    <link rel="stylesheet" href="style.css">
-    <style>
-        body { font-family: Arial, sans-serif; padding: 20px; }
-        table { border-collapse: collapse; width: 100%; }
-        th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
-        th { background-color: #f4f4f4; }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>نتائج الأطفال</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* ستايل عام */
+    body{ font-family: "Cairo", Arial, sans-serif; direction: rtl; margin:0; background:#fafafa; }
+    .site-header{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:20px;
+      padding:18px 24px;
+      background: linear-gradient(to right,#4a7ab5,#229497,#24a148);
+      color:#fff;
+      position:relative;
+    }
+    .header-logo{
+      height:60px;
+      width:auto;
+      border-radius:8px;
+      box-shadow:0 4px 10px rgba(0,0,0,0.12);
+      position:absolute;
+      left:20px;
+      top:12px;
+      /* background:#fff; */
+      padding:4px;
+    }
+
+    main{ padding:24px; display:flex; flex-direction:column; align-items:center; min-height:calc(100vh - 160px) }
+    .panel{ width: 90%; max-width: 1100px; background:#fff; border-radius:10px; padding:18px; box-shadow:0 6px 18px rgba(0,0,0,.06) }
+    h1{ color:#2b7a55; text-align:center; margin-top:0; margin-bottom:12px }
+    .controls{ display:flex; gap:12px; align-items:center; justify-content:flex-end; margin-bottom:14px; flex-wrap:wrap }
+    label{ font-weight:600; color:#333 }
+    select, button{ padding:10px 14px; border-radius:8px; border:1px solid #ddd; background:#fff; font-size:15px }
+    button.primary{ background:#2f7fb1; color:#fff; border:none; box-shadow:0 3px 8px rgba(47,127,177,0.12) }
+    button.ghost{ background:#f5f6f7 }
+    table{ width:100%; border-collapse:collapse; text-align:center; margin-top:8px }
+    th,td{ padding:10px; border:1px solid #eee; vertical-align:middle }
+    thead th{ background: linear-gradient(90deg,#24a148,#229497,#4a7ab5); color:#fff; font-size:14px }
+    tbody tr:nth-child(even){ background:#fbfdfb }
+    .note{ color:#666; text-align:center; margin-top:10px; font-size:13px }
+    @media (max-width:700px){
+      .controls{ justify-content:center }
+      table, .panel{ width:100% }
+      .header-logo{ height:48px; left:12px; top:10px; }
+    }
+  </style>
 </head>
 <body>
-    <h1 style="text-align: center;">جدول نتائج الأطفال</h1>
-    <table>
+  <header class="site-header">
+    <img src="asses/logo.png" alt="Logo" class="header-logo">
+    <h2>نمطي شخصيتي — عرض النتائج</h2>
+  </header>
+
+  <main>
+    <div class="panel">
+      <h1>جدول نتائج الأطفال</h1>
+
+      <div class="controls">
+        <label for="classFilter">اختر الفصل:</label>
+        <select id="classFilter">
+          <option value="all">— عرض الكل —</option>
+        </select>
+
+        <button id="loadBtn" class="primary">عرض النتائج</button>
+
+        <div style="flex:1"></div>
+
+        <button id="exportBtn" class="primary" title="تصدير الجدول الحالي">تصدير</button>
+      </div>
+
+      <table aria-label="نتائج الأطفال" id="resultsTable">
         <thead>
-            <tr>
-                <th>تاريخ التسجيل</th>
-                <th>نمط التفكير</th>
-                <th>الفصل</th>
-                <th>الاسم</th>
-            </tr>
+          <tr>
+            <th>الاسم</th>
+            <th>الفصل</th>
+            <th>نمط التفكير</th>
+            <th>تاريخ التسجيل</th>
+          </tr>
         </thead>
         <tbody id="resultsTableBody">
-            <tr><td colspan="5">جاري تحميل البيانات...</td></tr>
+          <tr><td colspan="4">جارِ التحميل...</td></tr>
         </tbody>
-    </table>
+      </table>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-        import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+      <p class="note">اختاري فصلاً من القائمة ثم اضغطي "عرض النتائج" لعرض نتائج ذلك الفصل فقط.</p>
+    </div>
+  </main>
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyB-FZIk3MoPegDHsmDDUzl5pYCzi4AnlEQ",
-            authDomain: "studentpatterns.firebaseapp.com",
-            projectId: "studentpatterns",
-            storageBucket: "studentpatterns.firebasestorage.app",
-            messagingSenderId: "533359813954",
-            appId: "1:533359813954:web:909cbdcd20733ac6e994db"
-        };
+  <footer style="background:linear-gradient(to right,#4a7ab5,#229497,#24a148); color:#fff; padding:12px 24px; text-align:left">وزارة التعليم</footer>
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+  <!-- Firebase -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+    import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
 
-        async function loadResults() {
-            const tbody = document.getElementById("resultsTableBody");
-            tbody.innerHTML = ""; // مسح المحتوى القديم
+    const firebaseConfig = {
+      apiKey: "AIzaSyB-FZIk3MoPegDHsmDDUzl5pYCzi4AnlEQ",
+      authDomain: "studentpatterns.firebaseapp.com",
+      projectId: "studentpatterns",
+      storageBucket: "studentpatterns.firebasestorage.app",
+      messagingSenderId: "533359813954",
+      appId: "1:533359813954:web:909cbdcd20733ac6e994db"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-            try {
-                const q = query(collection(db, "results"), orderBy("createdAt", "desc"));
-                const snapshot = await getDocs(q);
+    // ----- خيارات ثابتة
+    const classOptions = [
+      "1-2", "2-2", "3-2", "4-2", "5-2",
+      "تمهيدي 1", "تمهيدي 2", "تمهيدي 3", "تمهيدي 4", "تمهيدي 5", "تمهيدي 6"
+    ];
 
-                if (snapshot.empty) {
-                    tbody.innerHTML = "<tr><td colspan='5'>لا توجد بيانات بعد</td></tr>";
-                    return;
-                }
+    // عناصر الواجهة
+    const classFilter = document.getElementById('classFilter');
+    const loadBtn = document.getElementById('loadBtn');
+    const resultsBody = document.getElementById('resultsTableBody');
 
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    const answers = Array.isArray(data.answers) ? data.answers.join(", ") : "";
-                    const date = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleString("ar-EG") : "";
+    function fillClassSelectStatic() {
+      classOptions.forEach(opt => {
+        if (![...classFilter.options].some(o => o.value === opt)) {
+          const el = document.createElement('option');
+          el.value = opt;
+          el.innerText = opt;
+          classFilter.appendChild(el);
+        }
+      });
+    }
 
-                    const row = `<tr>
-                        <td>${date}</td>
-                        <td>${data.thinkingStyle || ""}</td>
-                         <td>${data.desc || ""}</td>
-                        <td>${data.name || ""}</td>
-                    </tr>`;
-                    tbody.innerHTML += row;
-                });
-            } catch (error) {
-                console.error("حدث خطأ أثناء جلب البيانات:", error);
-                tbody.innerHTML = "<tr><td colspan='5'>حدث خطأ أثناء تحميل البيانات</td></tr>";
+    // حاولت تجيب من Firestore لكن لو فشل نملأ ثابت
+    async function fillClassSelectFromFirestore() {
+      try {
+        const colRef = collection(db, "classes");
+        const snapshot = await getDocs(colRef);
+        if (!snapshot.empty) {
+          snapshot.forEach(doc => {
+            const name = doc.id;
+            if (![...classFilter.options].some(o => o.value === name)) {
+              const el = document.createElement('option');
+              el.value = name;
+              el.innerText = name;
+              classFilter.appendChild(el);
             }
+          });
+        }
+      } catch (e) {
+        // لو خطأ نكمّل بالثابت فقط
+        console.warn("خطأ عند جلب الفصول من Firestore:", e);
+      }
+    }
+
+    // تحميل النتائج (يتطابق ترتيب الأعمدة مع رأس الجدول)
+    async function loadResultsForClass(selected) {
+      resultsBody.innerHTML = "<tr><td colspan='4'>جارِ التحميل...</td></tr>";
+
+      try {
+        let q;
+        if (!selected || selected === "all") {
+          q = query(collection(db, "results"), orderBy("createdAt", "desc"));
+        } else {
+          // نحاول قراءة من classes/{selected}/results أولاً
+          const classDocId = selected;
+          q = query(collection(db, "classes", classDocId, "results"), orderBy("createdAt", "desc"));
         }
 
-        loadResults();
-    </script>
+        const snapshot = await getDocs(q);
+
+        // إذا لم يعد شيء من مسار الفصل نجرّب قراءة من "results" كنسخة احتياطية:
+        if (snapshot.empty && selected !== "all") {
+          // fallback: ابحث في results حيث desc == selected (لو خزنتِ الفصل داخل الحقل desc)
+          const backupQ = query(collection(db, "results"), orderBy("createdAt", "desc"));
+          const backupSnap = await getDocs(backupQ);
+          const filtered = [];
+          backupSnap.forEach(d => {
+            const dd = d.data();
+            if (dd.desc === selected) filtered.push({ id: d.id, data: dd });
+          });
+
+          if (filtered.length === 0) {
+            resultsBody.innerHTML = "<tr><td colspan='4'>لا توجد بيانات لهذا الفصل</td></tr>";
+            return;
+          } else {
+            resultsBody.innerHTML = "";
+            filtered.forEach(item => {
+              const data = item.data;
+              let date = "";
+              if (data.createdAt) {
+                try { date = data.createdAt.seconds ? new Date(data.createdAt.seconds * 1000).toLocaleString("ar-EG") : new Date(data.createdAt).toLocaleString("ar-EG"); }
+                catch(e){ date = String(data.createdAt); }
+              }
+              const row = document.createElement('tr');
+              row.innerHTML = `
+                <td>${data.name || ""}</td>
+                <td>${data.desc || ""}</td>
+                <td>${data.thinkingStyle || ""}</td>
+                <td>${date}</td>
+              `;
+              resultsBody.appendChild(row);
+            });
+            return;
+          }
+        }
+
+        if (snapshot.empty) {
+          resultsBody.innerHTML = "<tr><td colspan='4'>لا توجد بيانات</td></tr>";
+          return;
+        }
+
+        // افراغ ثم ملأ الجدول من الـ snapshot
+        resultsBody.innerHTML = "";
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          let date = "";
+          if (data.createdAt) {
+            try { date = data.createdAt.seconds ? new Date(data.createdAt.seconds * 1000).toLocaleString("ar-EG") : new Date(data.createdAt).toLocaleString("ar-EG"); }
+            catch(e){ date = String(data.createdAt); }
+          }
+
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${data.name || ""}</td>
+            <td>${data.desc || ""}</td>
+            <td>${data.thinkingStyle || ""}</td>
+            <td>${date}</td>
+          `;
+          resultsBody.appendChild(row);
+        });
+
+      } catch (e) {
+        console.error("خطأ أثناء جلب النتائج:", e);
+        resultsBody.innerHTML = "<tr><td colspan='4'>حدث خطأ أثناء جلب البيانات</td></tr>";
+      }
+    }
+
+    // حدث زر العرض
+    loadBtn.addEventListener('click', () => {
+      const val = classFilter.value || "all";
+      loadResultsForClass(val);
+    });
+
+    // تهيئة عند الفتح: جرب نملأ من Firestore وإلا نملأ بالثابت
+    (async function init() {
+      await fillClassSelectFromFirestore();
+      if (classFilter.options.length === 1) fillClassSelectStatic();
+      // افتراضياً نعرض كل النتائج
+      loadResultsForClass("all");
+    })();
+
+  </script>
+
+  <!-- Excel library -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+  <!-- كود التصدير: يصدر الجدول الظاهر حالياً -->
+  <script>
+    document.getElementById("exportBtn").addEventListener("click", () => {
+      const table = document.getElementById("resultsTable");
+
+      const workbook = XLSX.utils.table_to_book(table, { sheet: "نتائج الأطفال", raw: true });
+      const worksheet = workbook.Sheets["نتائج الأطفال"];
+      if (!worksheet || !worksheet["!ref"]) {
+        alert("لا توجد بيانات للتصدير.");
+        return;
+      }
+      const range = XLSX.utils.decode_range(worksheet["!ref"]);
+
+      for (let R = range.s.r; R <= range.e.r; ++R) {
+        for (let C = range.s.c; C <= range.e.c; ++C) {
+          const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
+          const cell = worksheet[cellAddress];
+          if (!cell) continue;
+
+          if (typeof cell.v === "string" && cell.v.includes("/")) {
+            cell.t = "s";
+            cell.v = "'" + cell.v;
+          }
+
+          if (R === 0) {
+            cell.s = {
+              fill: { fgColor: { rgb: "24A148" } },
+              font: { bold: true, color: { rgb: "FFFFFF" }, name: "Cairo", sz: 13 },
+              alignment: { horizontal: "center", vertical: "center", wrapText: true },
+              border: {
+                top: { style: "thin", color: { rgb: "CCCCCC" } },
+                bottom: { style: "thin", color: { rgb: "CCCCCC" } },
+                left: { style: "thin", color: { rgb: "CCCCCC" } },
+                right: { style: "thin", color: { rgb: "CCCCCC" } }
+              }
+            };
+          } else {
+            cell.s = {
+              fill: { fgColor: { rgb: R % 2 === 0 ? "F5F9F6" : "FFFFFF" } },
+              font: { color: { rgb: "000000" }, name: "Cairo", sz: 12 },
+              alignment: { horizontal: "center", vertical: "center", wrapText: true },
+              border: {
+                top: { style: "thin", color: { rgb: "E4E4E4" } },
+                bottom: { style: "thin", color: { rgb: "E4E4E4" } },
+                left: { style: "thin", color: { rgb: "E4E4E4" } },
+                right: { style: "thin", color: { rgb: "E4E4E4" } }
+              }
+            };
+          }
+        }
+      }
+
+      // ترتيب الأعمدة: الاسم - الفصل - النمط - التاريخ
+      worksheet["!cols"] = [
+        { wch: 25 }, // الاسم
+        { wch: 15 }, // الفصل
+        { wch: 20 }, // نمط التفكير
+        { wch: 22 }  // التاريخ
+      ];
+
+      const rowHeights = [];
+      for (let R = range.s.r; R <= range.e.r; ++R) {
+        rowHeights.push({ hpt: R === 0 ? 24 : 20 });
+      }
+      worksheet["!rows"] = rowHeights;
+
+      XLSX.writeFile(workbook, "نتائج_الأطفال.xlsx");
+    });
+  </script>
 </body>
 </html>
