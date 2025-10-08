@@ -8,13 +8,36 @@
 </head>
 <body>
     <header>
-        <h1>مرحبا بك في اختبار تحديد انماط التفكير    </h1>
-        <img src="./asses/logo.png" alt="" width="80px" >
-
+        <h2> نمطي شخصيتي </h2>
+        <img src="asses/logo.png" alt="" width="80px" >
     </header>
     <main>
 
-        <div class="quistioncontainer">
+        <!-- wrapper جديد يحوي الصور والبوكس المركزي -->
+<div class="with-sides">
+  <!-- صورة على اليسار -->
+  <img src="asses/طفلة.png" alt="طفلة" class="side-photo left">
+
+  <!-- البوكس المركزي (معدل قليلاً ليكون ضابط العرض) -->
+  <div id="startSection">
+      <h3>إبدا بإدخال بيانات الطفل</h3>
+      <input type="text" id="childName" placeholder="أدخل اسم الطفل" />
+      <select id="childDesc">
+        <option value="" disabled selected>اختر الفصل</option>
+      </select>
+      <div class="startbtncontainer">
+          <button id="startBtn">ابدأ</button>
+          <button id="storeda">الإطلاع على النتائج المحفوظه</button>
+          <h5 style="text-align: center; color: dimgray;">جميع الصور المستخدمة تم انشائها بواسطة الذكاء الإصطناعي</h5>
+      </div>
+  </div>
+
+  <!-- صورة على اليمين -->
+  <img src="asses/طفل.png" alt="طفل" class="side-photo right">
+</div>
+
+
+        <div class="quistioncontainer" style="display: none;">
              <h2 id="questionText">هل تريد معرفة المزيد؟</h2>
         <div class="img-container">
     <div class="answercard">
@@ -36,12 +59,32 @@
 </div>
 
 <div class="actionconatiner">
-    <button id="yesBtn">next</button>
-    <button id="noBtn">submit</button>
-    <button id="saveResultBtn">💾 حفظ النتيجة</button>
+    <button id="yesBtn">التالي</button>
+    <button id="noBtn">تسليم</button>
+    <!-- <button id="saveResultBtn">💾 حفظ النتيجة</button> -->
     <p id="saveStatus"></p>
 
-</div>       
+</div>    
+
+ <!-- ملف صوت التصفيق (حطي ملف applause.mp3 في المسار هذا) -->
+<audio id="applauseAudio" src="asses/kids_cheering.mp3" preload="auto"></audio>
+
+<!-- حاوية النجوم (ستُملأ ديناميكياً بواسطة JS) -->
+<div id="celebrationOverlay" class="celebration-overlay" aria-hidden="true"></div>
+
+<!-- ثم مودالك (لو موجود بالفعل خليه كما هو) -->
+<div id="myModal" class="modal">
+  <div class="modal-content">
+    <h1>نتيجة الاختبار</h1>
+    <p id="resultMessage">نمط الشخصية للطفل هو : </p>
+    <button id="closeModalBtn" class="close-btn">إغلاق</button>
+    <button id="saveResultBtn" class="save-btn">💾 حفظ النتيجة</button>
+  </div>
+</div>
+
+<!-- تحميل مكتبة الكونفيتي (أدخليها مرة قبل سكربتك) -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+
         
         <!-- <button id="clickMe">اضغط هنا</button> -->
     </main>
@@ -65,43 +108,83 @@
 
   // 🔹 دالة الحفظ
   async function saveResultToFirebase() {
-    const finalResult = window.currentThinkingStyle || "غير محدد";
+  const finalResult = window.currentThinkingStyle || "غير محدد";
 
-    // جلب اسم الطفل والفصل من selectedValues
-    const childNameObj = selectedValues.find(v => v.key === "childName");
-    const childDescObj = selectedValues.find(v => v.key === "childDesc");
+  // جلب اسم الطفل والفصل من selectedValues
+  const childNameObj = selectedValues.find(v => v.key === "childName");
+  const childDescObj = selectedValues.find(v => v.key === "childDesc");
 
-    const childName = childNameObj ? childNameObj.value : "";
-    const childDesc = childDescObj ? childDescObj.value : "";
+  const childName = childNameObj ? childNameObj.value : "";
+  const childDesc = childDescObj ? childDescObj.value : "";
 
-    if (!childName || !childDesc) {
-      alert("الرجاء إدخال اسم الطفل والفصل في أول سؤالين");
-      return;
-    }
-
-    // الإجابات الصورية
-    const imageAnswers = selectedValues.filter(v => typeof v === "string");
-
-    try {
-      await addDoc(collection(db, "results"), {
-        name: childName,
-        desc: childDesc,
-        answers: imageAnswers,
-        thinkingStyle: finalResult,
-        createdAt: new Date()
-      });
-      document.getElementById("saveStatus").innerText = "✅ تم حفظ النتيجة";
-      alert("تم حفظ النتيجة بنجاح في Firebase");
-    } catch (e) {
-      console.error("Error adding document: ", e);
-      document.getElementById("saveStatus").innerText = "❌ حدث خطأ أثناء الحفظ";
-      alert("حدث خطأ أثناء الحفظ في Firebase");
-    }
+  if (!childName || !childDesc) {
+    alert("الرجاء إدخال اسم الطفل والفصل في أول سؤالين");
+    return;
   }
 
+  // الإجابات الصورية (كل القيم النصية التي تم اختيارها بعد اسم/فصل)
+  const imageAnswers = selectedValues.filter(v => typeof v === "string");
+
+  // كائن البيانات الذي سنخزنه
+  const data = {
+    name: childName,
+    desc: childDesc,
+    answers: imageAnswers,
+    thinkingStyle: finalResult,
+    createdAt: new Date()
+  };
+
+  try {
+    // نحفظ نسخة عامة في collection 'results'
+    const generalRefPromise = addDoc(collection(db, "results"), data);
+
+    // نحفظ نسخة منظمة تحت classes/{classId}/results
+    const classDocId = sanitizeClassName(childDesc);
+    const classRefPromise = addDoc(collection(db, "classes", classDocId, "results"), data);
+
+    // ننفّذ العمليتين بالتوازي وننتظر اكتمالهم
+    await Promise.all([generalRefPromise, classRefPromise]);
+
+    document.getElementById("saveStatus").innerText = "✅ تم حفظ النتيجة";
+    alert("تم حفظ النتيجة بنجاح في Firebase");
+  } catch (e) {
+    console.error("Error adding document: ", e);
+    document.getElementById("saveStatus").innerText = "❌ حدث خطأ أثناء الحفظ";
+    alert("حدث خطأ أثناء الحفظ في Firebase");
+  }
+}
+
+
   // 🔹 ربط الزر
-  document.getElementById("saveResultBtn").addEventListener("click", saveResultToFirebase);
+  document.getElementById("saveResultBtn").addEventListener("click", () => {
+             const resultMessage = document.getElementById("resultMessage");
+    resultMessage.innerText = "تم حفظ النتيجة بنجاح  " ;
+
+    const modal = document.getElementById("myModal");
+    modal.style.display = "flex";
+    showCelebration();
+        saveResultToFirebase();
+        });
+
+
+document.getElementById("noBtn").addEventListener("click", () => {
+    // تأكد من حساب نمط التفكير قبل استخدامه
+    const resultMessage = document.getElementById("resultMessage");
+    const thinkingStyle = detectThinkingStyle(selectedValues); // احسب النمط
+    resultMessage.innerText = "نمط الشخصية للطفل هو : " + thinkingStyle;
+
+    const modal = document.getElementById("myModal");
+    modal.style.display = "flex"; // عرض النافذة المنبثقة
+    showCelebration();
+
+    // حفظ النتيجة في Firebase عند التسليم
+    
+});
+
+   
 </script>
+<script type="module" src="app.js"></script>
+
 
 
 
@@ -109,3 +192,9 @@
 </body>  <!-- ربط ملف الـ JavaScript -->
 </body>
 </html>
+
+
+
+
+
+
